@@ -8,7 +8,7 @@ An interactive data-driven dashboard visualizing the complex interplay between *
 
 ## 📊 Live Demo
 
-[👉 View the Live Dashboard](https://anusthan-singh.vercel.app/)  
+[👉 View the Live Dashboard](https://india-s-demographic-economic-nexus-dashboard.vercel.app/)  
 *(Best viewed on desktop for full interactive experience)*
 
 ---
