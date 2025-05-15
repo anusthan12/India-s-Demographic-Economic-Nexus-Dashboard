@@ -1,8 +1,8 @@
 # 🇮🇳 India’s Demographic-Economic Nexus Dashboard
 
-An interactive data-driven dashboard visualizing the complex interplay between **population, poverty, and pollution** in India — past, present, and future (1960–2025–2050). This dashboard is designed to aid **market analysts**, **economists**, **urban planners**, **policy-makers**, and **researchers** in understanding macroeconomic development scenarios, socio-demographic patterns, and long-term sustainability challenges.
+An interactive data-driven dashboard visualizing the complex interplay between **population, poverty, and pollution** in India — past, present, and future (1960–2025–2050). This dashboard is designed to aid **market analysts**, **economists**, **urban planners**, **policy-makers**, and **business leaders** in understanding macroeconomic development scenarios, socio-demographic patterns, and long-term sustainability challenges.
 
-> ✨ Built by [Anusthan Singh](https://www.linkedin.com/in/anusthan12/) – with AI-assisted development, data-driven design, and policy thinking in mind.
+> ✨ Built by [Anusthan Singh](https://www.linkedin.com/in/anusthan12/) — with AI-assisted development, data-backed insights, and policy-driven design.
 
 ---
 
@@ -66,6 +66,7 @@ It is designed to:
 ## 🧑‍💼 For Whom?
 
 This dashboard is particularly useful for:
+- **CXOs, Investors & Strategic Business Leaders**
 - **Policy Makers & Planners** (State & Central)
 - **Economists & Demographers**
 - **Urban Planners & Think Tanks**
@@ -93,11 +94,16 @@ This dashboard is particularly useful for:
 
 ## 🤖 Built with AI Assistance
 
-This project was accelerated with the help of **AI prompting and iterative refinement**, saving hours of front-end logic, data modeling, and UX work. The insights, design logic, and data interpretation are entirely human-led.
+This project was accelerated using **AI tools** for speed, refinement, and creative inspiration:
+
+- 🧠 **ChatGPT by OpenAI** – for code generation, responsive logic, and analytical insight
+- 🔮 **Gemini by Google** – for layout ideation, structural flow, and dashboard design guidance
+- 📘 **Claude by Anthropic** – for polishing narrative, improving language, and clarity enhancement
+
+> 💡 All data modeling, scenario framing, and dashboard logic were conceptualized, verified, and assembled by [Anusthan Singh](https://www.linkedin.com/in/anusthan12/), with AI as a productivity partner — not a replacement.
 
 ---
 
 ## ⭐️ Give It a Star!
 
-If this project inspired you or helped you understand India's developmental challenges — consider starring the repo to support it!
-
+If this project inspired you or helped you understand India's demographic challenges — consider ⭐️ starring the repo to support it!
