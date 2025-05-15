@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India’s Demographic-Economic Nexus: Population, Poverty & Pollution</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background for the page */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* 12px */
+            padding: 1.5rem; /* 24px */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover:not(.no-hover) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-title {
+            font-size: 0.875rem; /* 14px */
+            color: #4b5563; /* Gray-600 */
+            font-weight: 500;
+            margin-bottom: 0.5rem; /* 8px */
+        }
+        .card-value {
+            font-size: 1.875rem; /* 30px */
+            font-weight: 700;
+            color: #1f2937; /* Gray-800 */
+        }
+        .card-subtext {
+            font-size: 0.75rem; /* 12px */
+            color: #6b7280; /* Gray-500 */
+        }
+        .chart-container {
+            height: 300px; 
+            width: 100%;
+        }
+        h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600;
+            color: #111827; /* Gray-900 */
+            margin-bottom: 1rem; /* 16px */
+        }
+        h3 {
+            font-size: 1.125rem; /* 18px */
+            font-weight: 600;
+            color: #1f2937; /* Gray-800 */
+            margin-top: 1rem; /* 16px */
+            margin-bottom: 0.75rem; /* 12px */
+        }
+        h4 {
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            color: #374151; /* Gray-700 */
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem; 
+        }
+        th, td {
+            border: 1px solid #e5e7eb; /* Gray-200 */
+            padding: 0.75rem; 
+            text-align: left;
+            font-size: 0.875rem; 
+        }
+        th {
+            background-color: #f9fafb; /* Gray-50 */
+            font-weight: 600;
+            color: #374151; /* Gray-700 */
+        }
+        td {
+            color: #4b5563; /* Gray-600 */
+        }
+        .year-selector button {
+            background-color: #3b82f6; /* Blue-500 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* 6px */
+            margin: 0 0.25rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .year-selector button:hover {
+            background-color: #2563eb; /* Blue-600 */
+        }
+        .year-selector button.active {
+            background-color: #1d4ed8; /* Blue-700 */
+            font-weight: 700;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem; 
+        }
+        .section-divider {
+            border-top: 2px solid #e5e7eb; 
+            margin-top: 2rem; 
+            margin-bottom: 2rem; 
+        }
+        .insight-text {
+            font-size: 0.875rem; 
+            color: #374151; 
+            background-color: #f9fafb; 
+            padding: 0.75rem; 
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border: 1px solid #e5e7eb; 
+        }
+        .state-row:hover {
+            background-color: #eff6ff; /* Blue-50 */
+            cursor: pointer;
+        }
+        #stateSpotlightCard {
+            border-left: 4px solid #3b82f6; /* Blue-500 */
+        }
+        .scenario-card {
+            background-color: #f9fafb; /* Gray-50 */
+            border: 1px solid #e5e7eb; /* Gray-200 */
+            padding: 1rem;
+            border-radius: 0.5rem; /* 8px */
+            margin-bottom: 1rem;
+        }
+        .scenario-card h5 {
+            font-weight: 600;
+            color: #1f2937; /* Gray-800 */
+            margin-bottom: 0.5rem;
+        }
+        .positive-scenario { border-left: 3px solid #10b981; /* Emerald-500 */ }
+        .negative-scenario { border-left: 3px solid #ef4444; /* Red-500 */ }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="container mx-auto">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
+                India’s Demographic-Economic Nexus: Population, Poverty & Pollution
+              </h1>
+              
+            <p class="text-gray-600 text-lg">Visualizing Trends & Scenarios: 1960 - 2025 - 2050</p>
+        </header>
+
+        <div class="year-selector text-center mb-8">
+            <button data-year="1960" onclick="updateDashboardData('1960')">1960</button>
+            <button data-year="2025" onclick="updateDashboardData('2025')" class="active">2025</button>
+            <button data-year="2050" onclick="updateDashboardData('2050')">2050</button>
+        </div>
+
+        <section id="overview-cards" class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Essential Overview (<span id="current-year-display-overview">2025</span>)</h2>
+            <div class="kpi-grid">
+                <div class="card"> <p class="card-title">Total Population</p> <p class="card-value" id="current-population">--</p> <p class="card-subtext">In millions</p> </div>
+                <div class="card"> <p class="card-title">Population Growth Rate</p> <p class="card-value" id="current-growth-rate">--</p> <p class="card-subtext">Annual %</p> </div>
+                <div class="card"> <p class="card-title">Total Fertility Rate (TFR)</p> <p class="card-value" id="current-tfr">--</p> <p class="card-subtext">Children per woman</p> </div>
+                <div class="card"> <p class="card-title">Replacement TFR</p> <p class="card-value">2.1</p> <p class="card-subtext">Standard</p> </div>
+                <div class="card"> <p class="card-title">Urban Population</p> <p class="card-value" id="urban-population-split">--</p> <p class="card-subtext">% of total</p> </div>
+                <div class="card"> <p class="card-title">Rural Population</p> <p class="card-value" id="rural-population-split">--</p> <p class="card-subtext">% of total</p> </div>
+                <div class="card"> <p class="card-title">Youth Dependency Ratio</p> <p class="card-value" id="youth-dependency-ratio">--</p> <p class="card-subtext">Per 100 working-age</p> </div>
+                <div class="card"> <p class="card-title">Median Age</p> <p class="card-value" id="median-age">--</p> <p class="card-subtext">Years</p> </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div class="card">
+                <h2 class="mb-3">Poverty-Population Nexus</h2>
+                <div class="chart-container mb-4"> <canvas id="povertyPopulationChart"></canvas> </div>
+                <p class="insight-text" id="poverty-population-chart-insight">This chart visualizes the relationship between population density and poverty rate for the selected year.</p>
+                <h3>Key Observations & Insights</h3>
+                <p class="text-sm text-gray-600 mb-4" id="poverty-population-insights">Insights on the interplay between poverty levels and population dynamics for the selected year will appear here.</p>
+                <h3>Poverty Cycle Visual Representation</h3>
+                <div class="text-sm text-gray-600 p-3 border border-gray-200 rounded-md bg-gray-50">
+                    <p><strong>Low Education</strong> &rarr; High Fertility &rarr; <strong>Increased Poverty</strong> &rarr; Low Income &rarr; Limited Access to Healthcare & Education &rarr; <strong>Cycle Repeats</strong></p>
+                    <p class="mt-2 insight-text">This simplified model illustrates how various socio-economic factors can create a reinforcing cycle of poverty. Interventions often target education and healthcare to break this cycle.</p>
+                </div>
+                <h3 class="mt-6">Population Growth Trends (1960-2050)</h3>
+                <div class="chart-container"> <canvas id="populationGrowthChart"></canvas> </div>
+                <p class="insight-text" id="population-growth-chart-insight">This chart displays historical and projected population growth in India, highlighting key inflection points and future outlook.</p>
+            </div>
+
+            <div class="card">
+                <h2 class="mb-3">Education & Regional Impact</h2>
+                <h3>Education Impact on Fertility Rates (<span id="current-year-display-edu">2025</span>)</h3>
+                <div class="chart-container mb-4"> <canvas id="educationFertilityChart"></canvas> </div>
+                <p class="insight-text" id="education-fertility-chart-insight">This bar chart shows the Total Fertility Rate (TFR) segmented by different levels of educational attainment for women.</p>
+                <h3>Regional Classification & TFR (<span id="current-year-display-regional-tfr">2025</span>)</h3>
+                <table id="regional-classification-table" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50"> <tr> <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th> <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. TFR</th> <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Population Control Status</th> </tr> </thead>
+                    <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                </table>
+                <p class="insight-text" id="regional-table-insight">The table classifies regions based on their average TFR and population control status, indicating demographic diversity across India.</p>
+                <h3 class="mt-4">Key Regional Findings (<span id="current-year-display-regional-findings">2025</span>)</h3>
+                <ul class="list-disc list-inside text-sm text-gray-600" id="regional-findings-list"></ul>
+            </div>
+
+            <div class="card">
+                <h2 class="mb-3">State-Level Data & Policy (<span id="current-year-display-state">2025</span>)</h2>
+                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <h4 class="font-semibold text-blue-700">Correlation Insight (<span id="correlation-year">2025</span>)</h4>
+                    <p class="text-sm text-blue-600" id="education-tfr-correlation">Calculating correlation...</p>
+                </div>
+                <h3>State-wise Population Indicators</h3>
+                <p class="text-xs text-gray-500 mb-1">Click on a state row to see more details in the "State Spotlight" section below.</p>
+                <div class="overflow-x-auto max-h-96"> 
+                    <table id="state-wise-indicators-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0"> <tr> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TFR</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pop. Growth (%)</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edu. Rate (%)</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poverty Index</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pollution Index</th> </tr> </thead>
+                        <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                <p class="insight-text mt-2" id="state-table-insight">This table provides a snapshot of key demographic, social, and environmental indicators across various Indian states for the selected year.</p>
+                <h3 class="mt-4">Initiative Implementation Tracker (Illustrative)</h3>
+                <p class="text-sm text-gray-600" id="initiative-tracker-text">State-wise progress on key national initiatives (illustrative).</p>
+                <table class="min-w-full divide-y divide-gray-200 mt-2">
+                     <thead class="bg-gray-50"> <tr> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mission Parivar Vikas</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Healthcare Access Impr.</th> </tr> </thead>
+                    <tbody id="initiative-tracker-table-body"></tbody>
+                </table>
+                <h3 class="mt-4">State Performance Dashboard (Illustrative)</h3>
+                <p class="text-sm text-gray-600" id="state-performance-text">Highlights for <span id="current-year-display-state-perf">2025</span>:</p>
+                 <ul class="list-disc list-inside text-sm text-gray-600 mt-2"> <li id="best-performer">Best Performer: --</li> <li id="worst-performer">Needs Attention: --</li> </ul>
+            </div>
+        </div>
+        
+        <section id="stateSpotlightSection" class="mb-8">
+            <div id="stateSpotlightCard" class="card no-hover hidden"> 
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">State Spotlight: <span id="spotlight-state-name">--</span> (<span id="spotlight-year">2025</span>)</h2>
+                <div id="spotlight-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"> <p>Select a state from the table above to see its details here.</p> </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="globalContextSection" class="mb-8 card">
+            <h2 class="mb-3">India in Global Context: Comparative Insights (<span id="current-year-display-global">2025</span>)</h2>
+            <p class="text-sm text-gray-600 mb-4">Comparing India's demographic and environmental indicators with other nations provides valuable perspective. Data below is illustrative for the selected year.</p>
+            <div class="overflow-x-auto">
+                <table id="global-comparison-table" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Population (M)</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TFR</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pop. Density (p/km²)</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Pollution Index (0-100)</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brief Pollution Control Note</th>
+                        </tr>
+                    </thead>
+                    <tbody id="global-comparison-table-body" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <p class="insight-text mt-3">This comparison highlights diverse paths nations take in managing population growth and environmental quality. India's trajectory involves learning from global experiences while addressing unique internal complexities.</p>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="populationScenariosSection" class="mb-8 card">
+            <h2 class="mb-3">Future Lens: Population Scenarios & Socio-Economic Impacts (<span id="current-year-display-scenarios">2025</span>)</h2>
+            <p class="text-sm text-gray-600 mb-4">Understanding potential demographic futures and their varied impacts is crucial for long-term planning. Scenarios are illustrative and depend on policy choices and global trends.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="scenario-card positive-scenario">
+                    <h5>Potential Positive Scenarios</h5>
+                    <ul class="list-disc list-inside text-sm text-gray-700" id="positive-scenarios-list">
+                        </ul>
+                </div>
+                <div class="scenario-card negative-scenario">
+                    <h5>Potential Negative Scenarios</h5>
+                    <ul class="list-disc list-inside text-sm text-gray-700" id="negative-scenarios-list">
+                        </ul>
+                </div>
+            </div>
+
+            <h3>Illustrative State-Level Considerations & Impacts (<span id="current-year-display-state-scenarios">2025</span>)</h3>
+            <p class="text-sm text-gray-600 mb-2">Demographic shifts will not be uniform. Below are examples of how different types of states might be affected:</p>
+            <div id="state-scenarios-content" class="space-y-4">
+                </div>
+             <p class="insight-text mt-3">Effective policy responses will need to be tailored to specific regional and state-level demographic profiles, economic structures, and resource availability.</p>
+        </section>
+
+
+        <div class="section-divider"></div>
+
+        <section class="mb-8 card">
+            <h2 class="mb-3">Policy Toolkit & Future Outlook (<span id="current-year-display-policy">2025</span>)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3>Initiative Effectiveness vs Budget Allocation</h3>
+                    <div class="chart-container" style="height: 250px;"> <canvas id="initiativeEffectivenessChart"></canvas> </div>
+                    <p class="insight-text mt-1">This illustrative chart explores the hypothetical relationship between budget allocated to population control initiatives and their effectiveness scores.</p>
+                </div>
+                <div>
+                    <h3>Key Government Programs</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-600 mb-2">
+                        <li><strong>Mission Parivar Vikas:</strong> Improving family planning in high TFR districts.</li>
+                        <li><strong>National Health Mission (NHM):</strong> Universal healthcare access.</li>
+                        <li><strong>Samagra Shiksha:</strong> Integrated school education.</li>
+                        <li><strong>PM Ujjwala Yojana:</strong> Clean cooking fuel (indirect health/env. benefits).</li>
+                        <li><strong>National Clean Air Programme (NCAP):</strong> Air pollution reduction targets.</li>
+                    </ul>
+                    <h3>Success Factors Summary</h3>
+                     <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                        <li id="success-literacy">Literacy Rates: --</li>
+                        <li id="success-healthcare">Access to Healthcare: --</li>
+                        <li id="success-empowerment">Women's Empowerment: --</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-6">
+                <h4>Key Policy Levers for Sustainable Development</h4>
+                <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                    <li>Investing in human capital: Prioritizing quality education and skill development, especially for girls and women.</li>
+                    <li>Strengthening public health infrastructure: Ensuring accessible and affordable primary healthcare, including reproductive health services.</li>
+                    <li>Promoting sustainable urbanization: Planning for urban growth with adequate housing, transport, and waste management.</li>
+                    <li>Incentivizing green technologies: Supporting innovation and adoption of cleaner energy and production methods.</li>
+                    <li>Empowering local governance: Enabling local bodies to implement context-specific development and environmental plans.</li>
+                    <li>Data-driven policymaking: Utilizing robust data and predictive modeling for adaptive governance.</li>
+                </ul>
+            </div>
+             <div class="mt-6">
+                <h3>Population Class Distribution (<span id="current-year-display-pyramid">2025</span>)</h3>
+                <p class="text-sm text-gray-600 mb-2">Distribution of population by economic class. A table is used here for clarity.</p>
+                <div class="overflow-x-auto">
+                    <table id="population-class-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50"> <tr> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Definition (Illustrative)</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% of Population</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pollution Impact (Avg. Index)</th> </tr> </thead>
+                        <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                <p class="insight-text mt-2">This table illustrates socio-economic stratification and its potential correlation with pollution indicators.</p>
+            </div>
+            <div class="mt-6">
+                <h3>Pollution Index vs Income Group Heat Map (<span id="current-year-display-heatmap">2025</span>)</h3>
+                <p class="text-sm text-gray-600 mb-2">Illustrative heat map (table format) showing correlation between income groups and pollution levels.</p>
+                <div class="overflow-x-auto">
+                    <table id="pollution-heatmap-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50"> <tr> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Income Group</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Air Pollution</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Water Pollution</th> <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waste Generation</th> </tr> </thead>
+                        <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                <p class="insight-text mt-2">The heatmap suggests varying contributions to pollution across income strata.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-4 border-t border-gray-300">
+            <p class="text-sm text-gray-500">
+                Data Sources: World Bank, UN Population Division, Indian Census Bureau (Illustrative Data for Demo Purposes)
+            </p>
+            <p class="text-sm text-gray-500 mt-1">
+                &copy; <span id="footer-year">2025</span> India’s Demographic-Economic Nexus Dashboard. All rights reserved.
+            </p>
+            <p class="text-sm text-gray-500 mt-1">
+                Designed & Developed by 
+                <a href="https://www.linkedin.com/in/anusthan12/" target="_blank" class="text-blue-600 hover:underline font-medium">Anusthan Singh</a>
+                &nbsp;|&nbsp;
+                <a href="https://github.com/anusthan12" target="_blank" class="text-blue-600 hover:underline">GitHub</a>
+                &nbsp;|&nbsp;
+                <a href="https://anusthan-singh.vercel.app/" target="_blank" class="text-blue-600 hover:underline">Portfolio</a>
+            </p>
+        </footer>
+        
+
+    </div>
+
+    <script>
+        // --- EMBEDDED DATA ---
+        const appData = {
+            "1960": {
+                overview: { population: 449.5, growthRate: 2.05, tfr: 5.9, urbanPopulationSplit: 17.9, youthDependencyRatio: 78.5, medianAge: 21.3 },
+                povertyPopulation: { povertyRate: 60, populationDensity: 137 },
+                educationFertility: [ { level: "No Education", tfr: 6.5 }, { level: "Primary", tfr: 5.2 }, { level: "Secondary", tfr: 4.0 }, { level: "Tertiary", tfr: 2.8 } ],
+                regionalData: [ { region: "North", tfr: 6.2, status: "High Growth" }, { region: "South", tfr: 5.0, status: "Moderate Growth" }, { region: "East", tfr: 6.0, status: "High Growth" }, { region: "West", tfr: 5.5, status: "Moderate Growth" }, { region: "North-East", tfr: 6.3, status: "High Growth" }, { region: "AP & Telangana", tfr: 5.8, status: "High Growth" } ],
+                stateData: [ { name: "Uttar Pradesh", tfr: 6.4, growth: 2.2, eduRate: 20, povertyIdx: 0.65, pollutionIdx: 40, notes: "High fertility, low education." }, { name: "Kerala", tfr: 4.8, growth: 1.8, eduRate: 45, povertyIdx: 0.30, pollutionIdx: 60, notes: "Higher education, moderate TFR." }, { name: "Bihar", tfr: 6.3, growth: 2.3, eduRate: 18, povertyIdx: 0.70, pollutionIdx: 35, notes: "Very high fertility, very low education." }, { name: "Tamil Nadu", tfr: 5.0, growth: 1.7, eduRate: 40, povertyIdx: 0.35, pollutionIdx: 65, notes: "Moderate indicators for the time." } ],
+                populationClass: [ { class: "Extremely Poor", definition: "<$1/day", percentage: 50, pollutionImpact: 20 }, { class: "Poor", definition: "$1-2/day", percentage: 30, pollutionImpact: 25 }, { class: "Lower Middle", definition: "$2-10/day", percentage: 15, pollutionImpact: 40 }, { class: "Middle Class", definition: "$10-50/day", percentage: 4, pollutionImpact: 60 }, { class: "Upper Middle +", definition: ">$50/day", percentage: 1, pollutionImpact: 75 } ],
+                pollutionHeatmap: [ { group: "Extremely Poor", air: 15, water: 25, waste: 10 }, { group: "Poor", air: 20, water: 30, waste: 15 }, { group: "Lower Middle", air: 35, water: 40, waste: 30 }, { group: "Middle Class", air: 60, water: 50, waste: 55 }, { group: "Affluent", air: 75, water: 60, waste: 70 } ],
+                initiativeEffectiveness: { budget: [10, 20, 30, 40, 50], effectiveness: [15, 25, 40, 50, 65] },
+                policy: { literacy: "Female literacy was very low, contributing to high TFR.", healthcare: "Access to family planning was minimal.", empowerment: "Women had limited roles in decision-making." },
+                statePerformance: { best: "Kerala (relatively better education)", worst: "Bihar (highest TFR, lowest education)"},
+                initiativeTracker: [ { state: "Uttar Pradesh", mpv: "Not Started", health: "Low" }, { state: "Kerala", mpv: "Not Applicable", health: "Medium" } ],
+                globalComparison: [
+                    { name: "India", population: 449.5, tfr: 5.9, density: 137, pollutionIdx: 30, controlNote: "Early stages, limited environmental regulation." },
+                    { name: "China", population: 660.0, tfr: 5.7, density: 69, pollutionIdx: 35, controlNote: "Focus on industrial growth, environmental concerns emerging." },
+                    { name: "USA", population: 180.7, tfr: 3.6, density: 20, pollutionIdx: 50, controlNote: "Post-war industrial boom, early clean air/water acts later." },
+                    { name: "Germany (West)", population: 55.4, tfr: 2.4, density: 223, pollutionIdx: 45, controlNote: "Rapid industrialization, pollution becoming a concern." }
+                ],
+                populationScenarios: {
+                    positive: ["Potential for demographic dividend with a large young workforce.", "Growing domestic market stimulating economic activity."],
+                    negative: ["Strain on natural resources (water, land, food).", "Challenges in providing adequate education, healthcare, and employment for all."],
+                    stateImpacts: [
+                        { type: "High TFR/Populous States (e.g., UP, Bihar in 1960s context)", advantage: "Large future labor pool.", disadvantage: "Immense pressure on basic services, high dependency ratio." , jobsMarket: "Subsistence agriculture, limited formal jobs.", keyFactors: "High birth rates, low literacy." },
+                        { type: "States with some Industrialization (e.g., Maharashtra, West Bengal in 1960s context)", advantage: "Potential for labor absorption in industries.", disadvantage: "Urban areas face early signs of crowding and pollution." , jobsMarket: "Emerging industrial jobs, informal sector growth.", keyFactors: "Rural-urban migration beginning." }
+                    ]
+                }
+            },
+            "2025": {
+                overview: { population: 1450.0, growthRate: 0.81, tfr: 2.05, urbanPopulationSplit: 36.0, youthDependencyRatio: 47.0, medianAge: 28.7 },
+                povertyPopulation: { povertyRate: 15, populationDensity: 480 },
+                educationFertility: [ { level: "No Education", tfr: 3.0 }, { level: "Primary", tfr: 2.5 }, { level: "Secondary", tfr: 2.0 }, { level: "Tertiary", tfr: 1.7 } ],
+                regionalData: [ { region: "North", tfr: 2.3, status: "Approaching Stability" }, { region: "South", tfr: 1.7, status: "Below Replacement" }, { region: "East", tfr: 2.4, status: "Above National Avg" }, { region: "West", tfr: 1.9, status: "Stable" }, { region: "North-East", tfr: 2.2, status: "Moderate" }, { region: "AP & Telangana", tfr: 1.8, status: "Below Replacement" } ],
+                stateData: [ { name: "Uttar Pradesh", tfr: 2.4, growth: 1.0, eduRate: 70, povertyIdx: 0.20, pollutionIdx: 75, notes: "Improving but still high TFR for its size." }, { name: "Kerala", tfr: 1.6, growth: 0.5, eduRate: 96, povertyIdx: 0.05, pollutionIdx: 55, notes: "Leader in socio-demographic indicators." }, { name: "Bihar", tfr: 2.8, growth: 1.2, eduRate: 65, povertyIdx: 0.28, pollutionIdx: 70, notes: "Highest TFR, significant challenges remain." }, { name: "Tamil Nadu", tfr: 1.7, growth: 0.6, eduRate: 85, povertyIdx: 0.08, pollutionIdx: 60, notes: "Strong performance, below replacement TFR." }, { name: "Maharashtra", tfr: 1.8, growth: 0.7, eduRate: 82, povertyIdx: 0.12, pollutionIdx: 80, notes: "Economic hub, moderate TFR, high pollution." }, { name: "Rajasthan", tfr: 2.2, growth: 0.9, eduRate: 68, povertyIdx: 0.18, pollutionIdx: 68, notes: "Progressing, TFR above national average." } ],
+                populationClass: [ { class: "Extremely Poor", definition: "<$2.15/day PPP", percentage: 5, pollutionImpact: 30 }, { class: "Poor", definition: "$2.15-3.65/day PPP", percentage: 15, pollutionImpact: 35 }, { class: "Lower Middle", definition: "$3.65-10/day PPP", percentage: 40, pollutionImpact: 50 }, { class: "Middle Class", definition: "$10-50/day PPP", percentage: 30, pollutionImpact: 70 }, { class: "Upper Middle", definition: "$50-100/day PPP", percentage: 7, pollutionImpact: 80 }, { class: "Affluent +", definition: ">$100/day PPP", percentage: 3, pollutionImpact: 90 } ],
+                pollutionHeatmap: [ { group: "Extremely Poor", air: 30, water: 40, waste: 25 }, { group: "Poor", air: 40, water: 50, waste: 35 }, { group: "Lower Middle", air: 60, water: 65, waste: 50 }, { group: "Middle Class", air: 75, water: 70, waste: 70 }, { group: "Affluent", air: 85, water: 60, waste: 80 } ],
+                initiativeEffectiveness: { budget: [50, 100, 150, 200, 250], effectiveness: [40, 55, 70, 80, 85] },
+                policy: { literacy: "Significant improvement in overall literacy, female literacy catching up.", healthcare: "Improved access to contraception and maternal health, though disparities exist.", empowerment: "Increased female participation in workforce and education." },
+                statePerformance: { best: "Kerala (Low TFR, High Edu)", worst: "Bihar (High TFR, High Pollution)"},
+                initiativeTracker: [ { state: "Uttar Pradesh", mpv: "Active", health: "Improving" }, { state: "Kerala", mpv: "Sustained", health: "Good" }, { state: "Bihar", mpv: "High Focus", health: "Needs Impr." }, { state: "Tamil Nadu", mpv: "Sustained", health: "Good" } ],
+                globalComparison: [
+                    { name: "India", population: 1450.0, tfr: 2.05, density: 480, pollutionIdx: 70, controlNote: "Focus on renewable energy, emission standards; challenges in implementation." },
+                    { name: "China", population: 1425.0, tfr: 1.2, density: 148, pollutionIdx: 65, controlNote: "Aggressive pollution control, 'war on pollution', significant investments." },
+                    { name: "USA", population: 335.0, tfr: 1.7, density: 36, pollutionIdx: 40, controlNote: "Established EPA, ongoing debates on regulation stringency." },
+                    { name: "Germany", population: 83.0, tfr: 1.5, density: 235, pollutionIdx: 30, controlNote: "Strong 'Energiewende' (energy transition), focus on circular economy." },
+                    { name: "Nigeria", population: 230.0, tfr: 4.8, density: 250, pollutionIdx: 75, controlNote: "Rapid urbanization, significant pollution challenges, developing regulatory frameworks." }
+                ],
+                populationScenarios: {
+                    positive: ["Window of demographic dividend if youth are skilled and employed.", "Large and diverse consumer market driving economic growth.", "Potential for innovation and entrepreneurship from a young population."],
+                    negative: ["Risk of high youth unemployment if job creation lags.", "Increased pressure on urban infrastructure and housing.", "Environmental degradation if growth is not sustainable.", "Widening regional disparities if development is uneven."],
+                    stateImpacts: [
+                        { type: "High TFR/Young Population States (e.g., Bihar, UP)", advantage: "Large pool of potential workers, demographic dividend potential.", disadvantage: "High demand for education, healthcare, and jobs; risk of social unrest if needs unmet." , jobsMarket: "Need for massive job creation in formal/informal sectors.", keyFactors: "Skill development, attracting investment." },
+                        { type: "Low TFR/Aging States (e.g., Kerala, Tamil Nadu)", advantage: "Lower pressure on child services, experienced workforce.", disadvantage: "Increasing elderly dependency ratio, need for geriatric care and social security." , jobsMarket: "Shift towards service sector, healthcare jobs; potential labor shortages in some areas.", keyFactors: "Pension reforms, healthcare for elderly." },
+                        { type: "Industrialized/Urbanized States (e.g., Maharashtra, Gujarat)", advantage: "Hubs for economic activity and job creation.", disadvantage: "High pollution levels, strain on urban amenities, housing shortages." , jobsMarket: "Diverse job market, but competition and skill gaps.", keyFactors: "Sustainable urban planning, pollution control." }
+                    ]
+                }
+            },
+            "2050": { 
+                overview: { population: 1650.0, growthRate: 0.1, tfr: 1.8, urbanPopulationSplit: 50.0, youthDependencyRatio: 38.0, medianAge: 37.5 }, // Note: Youth dependency might start to rise again if TFR stays low and elderly pop grows. This is simplified.
+                povertyPopulation: { povertyRate: 5, populationDensity: 540 },
+                educationFertility: [ { level: "No Education", tfr: 2.2 }, { level: "Primary", tfr: 2.0 }, { level: "Secondary", tfr: 1.8 }, { level: "Tertiary", tfr: 1.6 } ],
+                regionalData: [ { region: "North", tfr: 1.9, status: "Stable" }, { region: "South", tfr: 1.6, status: "Below Replacement (Aging)" }, { region: "East", tfr: 2.0, status: "Stable" }, { region: "West", tfr: 1.7, status: "Below Replacement" }, { region: "North-East", tfr: 1.8, status: "Stable" }, { region: "AP & Telangana", tfr: 1.6, status: "Below Replacement (Aging)" } ],
+                stateData: [ { name: "Uttar Pradesh", tfr: 2.0, growth: 0.3, eduRate: 85, povertyIdx: 0.08, pollutionIdx: 65, notes: "Projected to stabilize, challenges with scale." }, { name: "Kerala", tfr: 1.5, growth: 0.0, eduRate: 99, povertyIdx: 0.01, pollutionIdx: 50, notes: "Aging population becomes a key concern." }, { name: "Bihar", tfr: 2.2, growth: 0.5, eduRate: 80, povertyIdx: 0.12, pollutionIdx: 60, notes: "TFR decline continues, but still relatively high." }, { name: "Tamil Nadu", tfr: 1.5, growth: 0.0, eduRate: 98, povertyIdx: 0.02, pollutionIdx: 55, notes: "Focus on geriatric care and sustaining development." }, { name: "Maharashtra", tfr: 1.6, growth: 0.1, eduRate: 95, povertyIdx: 0.05, pollutionIdx: 70, notes: "Managing urbanization and environmental impact." }, { name: "Rajasthan", tfr: 1.9, growth: 0.2, eduRate: 82, povertyIdx: 0.07, pollutionIdx: 62, notes: "Approaching TFR stability, environmental management key." } ],
+                populationClass: [ { class: "Extremely Poor", definition: "<$2.15/day PPP", percentage: 1, pollutionImpact: 25 }, { class: "Poor", definition: "$2.15-3.65/day PPP", percentage: 4, pollutionImpact: 30 }, { class: "Lower Middle", definition: "$3.65-10/day PPP", percentage: 25, pollutionImpact: 45 }, { class: "Middle Class", definition: "$10-50/day PPP", percentage: 45, pollutionImpact: 65 }, { class: "Upper Middle", definition: "$50-100/day PPP", percentage: 15, pollutionImpact: 75 }, { class: "Affluent +", definition: ">$100/day PPP", percentage: 10, pollutionImpact: 85 } ],
+                pollutionHeatmap: [ { group: "Extremely Poor", air: 25, water: 35, waste: 20 }, { group: "Poor", air: 35, water: 45, waste: 30 }, { group: "Lower Middle", air: 50, water: 55, waste: 45 }, { group: "Middle Class", air: 70, water: 60, waste: 65 }, { group: "Affluent", air: 80, water: 55, waste: 75 } ],
+                initiativeEffectiveness: { budget: [100, 200, 300, 400, 500], effectiveness: [60, 75, 85, 90, 92] },
+                policy: { literacy: "Near universal literacy, focus on quality of education and skills.", healthcare: "Universal healthcare access, challenges in geriatric care emerge.", empowerment: "High female empowerment, focus on leadership roles." },
+                statePerformance: { best: "Most Southern States (Aging, Stable)", worst: "Some Northern/Eastern states (Slower TFR decline)"},
+                initiativeTracker: [ { state: "Uttar Pradesh", mpv: "Sustained", health: "Good" }, { state: "Kerala", mpv: "Geriatric Focus", health: "Very Good" }, { state: "Bihar", mpv: "Sustained", health: "Improving" }, { state: "Tamil Nadu", mpv: "Geriatric Focus", health: "Very Good" } ],
+                globalComparison: [
+                    { name: "India", population: 1650.0, tfr: 1.8, density: 540, pollutionIdx: 55, controlNote: "Mature environmental regulations, focus on sustainable development goals, circular economy." },
+                    { name: "China", population: 1350.0, tfr: 1.1, density: 140, pollutionIdx: 45, controlNote: "Population decline, continued environmental improvement efforts, focus on green tech." },
+                    { name: "USA", population: 370.0, tfr: 1.7, density: 39, pollutionIdx: 35, controlNote: "Advanced environmental tech, policy shifts based on administration." },
+                    { name: "Germany", population: 78.0, tfr: 1.5, density: 220, pollutionIdx: 25, controlNote: "Highly advanced green economy, potential demographic challenges from aging." },
+                    { name: "Nigeria", population: 400.0, tfr: 3.5, density: 430, pollutionIdx: 60, controlNote: "Continued population growth, increasing efforts for environmental management amid development pressures." }
+                ],
+                populationScenarios: {
+                    positive: ["Mature economy with a large, skilled workforce if earlier investments pay off.", "Potential global leader in specific industries due to demographic scale.", "Improved quality of life if sustainable development is achieved."],
+                    negative: ["Challenges of an aging population: healthcare costs, pension burdens, shrinking workforce in some sectors.", "Persistent environmental issues if past damage is not fully remediated.", "Risk of social stagnation if innovation doesn't keep pace with demographic shifts."],
+                    stateImpacts: [
+                        { type: "States with Earlier High TFR (now stabilizing, e.g., UP, Bihar)", advantage: "Large working-age population, but aging starts.", disadvantage: "Need for social security expansion, reskilling workforce." , jobsMarket: "Mix of manufacturing, services; potential for out-migration if local opportunities are scarce.", keyFactors: "Managing aging, sustainable resource use." },
+                        { type: "States with Long-term Low TFR (e.g., Kerala, Tamil Nadu)", advantage: "High human development indicators.", disadvantage: "Pronounced aging, potential labor shortages, high healthcare demand for elderly." , jobsMarket: "Dominated by high-skill services, healthcare, 'silver economy' emerges.", keyFactors: "Robotics, automation, attracting young talent, robust social security." },
+                        { type: "Economically Dynamic States (e.g., Maharashtra, Karnataka)", advantage: "Continued economic growth, innovation hubs.", disadvantage: "Managing megacities, extreme pollution events, resource competition." , jobsMarket: "High-tech jobs, advanced services, but also gig economy and precarity.", keyFactors: "Smart city solutions, environmental resilience, inclusive growth." }
+                    ]
+                }
+            },
+            populationTrend: {
+                labels: ["1960", "1970", "1980", "1990", "2000", "2010", "2020", "2025", "2030", "2040", "2050"],
+                data: [449.5, 548.2, 683.3, 846.4, 1028.7, 1210.8, 1380.0, 1450.0, 1510.0, 1600.0, 1650.0] 
+            }
+        };
+
+        // --- CHART INSTANCES ---
+        let povertyPopulationChartInstance, populationGrowthChartInstance, educationFertilityChartInstance, initiativeEffectivenessChartInstance;
+        let currentSelectedYear = '2025'; 
+
+        // --- UTILITY FUNCTIONS ---
+        function formatNumber(num, decimals = 1) {
+            if (typeof num !== 'number' || isNaN(num)) return '--';
+            return num.toFixed(decimals);
+        }
+
+        function getPollutionColor(value) { 
+            if (value < 30) return 'bg-green-100 text-green-800';
+            if (value < 60) return 'bg-yellow-100 text-yellow-800';
+            if (value < 80) return 'bg-orange-100 text-orange-800';
+            return 'bg-red-100 text-red-800';
+        }
+
+        function calculateCorrelation(arrX, arrY) {
+            if (arrX.length !== arrY.length || arrX.length === 0) { return NaN; }
+            const n = arrX.length;
+            const sumX = arrX.reduce((acc, val) => acc + val, 0);
+            const sumY = arrY.reduce((acc, val) => acc + val, 0);
+            const sumXY = arrX.reduce((acc, val, i) => acc + val * arrY[i], 0);
+            const sumX2 = arrX.reduce((acc, val) => acc + val * val, 0);
+            const sumY2 = arrY.reduce((acc, val) => acc + val * val, 0);
+            const numerator = n * sumXY - sumX * sumY;
+            const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+            if (denominator === 0) { return 0; }
+            return numerator / denominator;
+        }
+        
+        // --- UPDATE FUNCTIONS ---
+        function updateDashboardData(year) {
+            currentSelectedYear = year; 
+            const data = appData[year];
+            if (!data) { console.error("Data for year " + year + " not found."); return; }
+
+            document.querySelectorAll('[id^="current-year-display-"]').forEach(el => el.textContent = year);
+            document.getElementById('footer-year').textContent = year;
+            document.getElementById('correlation-year').textContent = year;
+            document.getElementById('spotlight-year').textContent = year;
+            // New year displays for new sections
+            if(document.getElementById('current-year-display-global')) document.getElementById('current-year-display-global').textContent = year;
+            if(document.getElementById('current-year-display-scenarios')) document.getElementById('current-year-display-scenarios').textContent = year;
+            if(document.getElementById('current-year-display-state-scenarios')) document.getElementById('current-year-display-state-scenarios').textContent = year;
+
+
+            // Update Overview Cards
+            document.getElementById('current-population').textContent = formatNumber(data.overview.population, 1);
+            document.getElementById('current-growth-rate').textContent = formatNumber(data.overview.growthRate, 2) + '%';
+            document.getElementById('current-tfr').textContent = formatNumber(data.overview.tfr, 2);
+            document.getElementById('urban-population-split').textContent = formatNumber(data.overview.urbanPopulationSplit, 1) + '%';
+            document.getElementById('rural-population-split').textContent = formatNumber(100 - data.overview.urbanPopulationSplit, 1) + '%';
+            document.getElementById('youth-dependency-ratio').textContent = formatNumber(data.overview.youthDependencyRatio, 1);
+            document.getElementById('median-age').textContent = formatNumber(data.overview.medianAge, 1);
+
+            // Update Poverty-Population Nexus
+            const povPopInsightText = `For ${year}, the poverty rate is estimated at ${data.povertyPopulation.povertyRate}% with a population density of ${data.povertyPopulation.populationDensity} per sq km. ${year === '1960' ? 'High poverty and rapid population growth were common.' : year === '2025' ? 'Significant poverty reduction has occurred, but challenges remain in densely populated areas.' : 'Poverty is projected to be low, but managing resources for a large population remains key.'} Analysis often shows a complex link where high density and low resources can exacerbate poverty.`;
+            document.getElementById('poverty-population-insights').textContent = povPopInsightText;
+            if (povertyPopulationChartInstance) {
+                povertyPopulationChartInstance.data.datasets[0].data = [{ x: data.povertyPopulation.populationDensity, y: data.povertyPopulation.povertyRate, r: (year === '1960' ? 8 : year === '2025' ? 12 : 10) }];
+                povertyPopulationChartInstance.options.scales.x.title.text = `Population Density (per sq km) in ${year}`;
+                povertyPopulationChartInstance.options.scales.y.title.text = `Poverty Rate (%) in ${year}`;
+                povertyPopulationChartInstance.update();
+            }
+            document.getElementById('poverty-population-chart-insight').textContent = `Bubble chart showing population density vs. poverty rate in ${year}. Bubble size is illustrative.`;
+            document.getElementById('population-growth-chart-insight').textContent = `India's population trend from 1960, with projections to 2050. Current view for ${year} highlights its position on this trajectory.`;
+
+            // Update Education Impact on Fertility Chart
+            if (educationFertilityChartInstance) {
+                educationFertilityChartInstance.data.labels = data.educationFertility.map(d => d.level);
+                educationFertilityChartInstance.data.datasets[0].data = data.educationFertility.map(d => d.tfr);
+                educationFertilityChartInstance.options.plugins.title.text = `Education Impact on TFR in ${year}`;
+                educationFertilityChartInstance.update();
+            }
+            document.getElementById('education-fertility-chart-insight').textContent = `TFR by women's education level in ${year}. Generally, higher education correlates with lower TFR. ${year === '1960' ? 'TFR was high across all education levels.' : year === '2025' ? 'A significant decline in TFR is seen with increased education.' : 'TFR is projected to be low across all groups, with tertiary education having the lowest.'}`;
+
+            // Update Regional Classification Table
+            const regionalTableBody = document.getElementById('regional-classification-table').getElementsByTagName('tbody')[0];
+            regionalTableBody.innerHTML = ''; 
+            data.regionalData.forEach(item => {
+                let row = regionalTableBody.insertRow();
+                row.insertCell().textContent = item.region;
+                row.insertCell().textContent = formatNumber(item.tfr, 2);
+                let statusCell = row.insertCell(); statusCell.textContent = item.status;
+                if(item.tfr < 2.1) statusCell.className = 'text-green-600 font-medium';
+                else if (item.tfr > 2.5) statusCell.className = 'text-red-600 font-medium';
+                else statusCell.className = 'text-yellow-600 font-medium';
+            });
+            document.getElementById('regional-table-insight').textContent = `Regional TFR and population status in ${year}. Southern states typically show lower TFRs earlier than Northern states.`;
+            
+            let regionalFindingsHtml = '';
+            if (year === "1960") { regionalFindingsHtml = `<li>Most regions showed high TFR (>5.0), indicating a rapid population growth phase.</li><li>South India had comparatively lower TFR but still significantly above replacement.</li>`; } 
+            else if (year === "2025") { regionalFindingsHtml = `<li>Southern and Western regions generally show TFR at or below replacement levels (around 1.7-1.9).</li><li>Some Northern and Eastern regions still have TFR above national average (e.g., 2.3-2.4).</li>`; } 
+            else { regionalFindingsHtml = `<li>Most regions are projected to have stable or declining populations (TFR around 1.6-2.0).</li><li>Aging populations will become a key concern in regions with very low TFR.</li>`; }
+            document.getElementById('regional-findings-list').innerHTML = regionalFindingsHtml;
+
+            // Correlation for Education Rate vs TFR
+            const eduRates = data.stateData.map(s => s.eduRate);
+            const tfrs = data.stateData.map(s => s.tfr);
+            const correlation = calculateCorrelation(eduRates, tfrs);
+            const correlationEl = document.getElementById('education-tfr-correlation');
+            if (!isNaN(correlation)) { correlationEl.innerHTML = `Pearson Correlation (State Edu. Rate vs. TFR): <strong>${formatNumber(correlation, 3)}</strong>. <span class="text-xs block">${correlation < -0.5 ? 'Strong negative correlation observed.' : correlation < -0.2 ? 'Moderate negative correlation.' : 'Weak or no strong linear correlation.'}</span>`; } 
+            else { correlationEl.textContent = "Correlation N/A."; }
+
+            // Update State-wise Population Indicators Table
+            const stateTableBody = document.getElementById('state-wise-indicators-table').getElementsByTagName('tbody')[0];
+            stateTableBody.innerHTML = ''; 
+            data.stateData.forEach(state => { 
+                let row = stateTableBody.insertRow(); row.className = 'state-row'; row.setAttribute('data-state-name', state.name);
+                row.insertCell().textContent = state.name;
+                row.insertCell().textContent = formatNumber(state.tfr, 2);
+                row.insertCell().textContent = formatNumber(state.growth, 2) + '%';
+                row.insertCell().textContent = formatNumber(state.eduRate, 0) + '%';
+                row.insertCell().textContent = formatNumber(state.povertyIdx, 2);
+                let pollutionCell = row.insertCell(); pollutionCell.textContent = formatNumber(state.pollutionIdx,0); pollutionCell.className = getPollutionColor(state.pollutionIdx).split(' ')[0].replace('bg-', 'text-') + ' font-medium'; 
+                row.addEventListener('click', () => updateStateSpotlight(state.name, year));
+            });
+            document.getElementById('state-table-insight').textContent = `State-level indicators for ${year}. Click a state to view its spotlight. Variations highlight diverse developmental trajectories.`;
+            clearStateSpotlight();
+
+            // Update Initiative Tracker Table
+            const initiativeTableBody = document.getElementById('initiative-tracker-table-body');
+            initiativeTableBody.innerHTML = '';
+            data.initiativeTracker.slice(0,4).forEach(item => { let row = initiativeTableBody.insertRow(); row.insertCell().textContent = item.state; row.insertCell().textContent = item.mpv; row.insertCell().textContent = item.health; });
+
+            // Update State Performance
+            document.getElementById('best-performer').textContent = `Best Performer: ${data.statePerformance.best}`;
+            document.getElementById('worst-performer').textContent = `Needs Attention: ${data.statePerformance.worst}`;
+            document.getElementById('state-performance-text').innerHTML = `Highlights for ${year}:`;
+
+            // Update Initiative Effectiveness Chart
+            if (initiativeEffectivenessChartInstance) {
+                initiativeEffectivenessChartInstance.data.labels = data.initiativeEffectiveness.budget.map(b => `₹${b} Cr`);
+                initiativeEffectivenessChartInstance.data.datasets[0].data = data.initiativeEffectiveness.effectiveness;
+                initiativeEffectivenessChartInstance.options.plugins.title.text = `Initiative Effectiveness vs Budget (${year})`;
+                initiativeEffectivenessChartInstance.update();
+            }
+            
+            // Update Policy Success Factors
+            document.getElementById('success-literacy').innerHTML = `<strong>Literacy Rates:</strong> ${data.policy.literacy}`;
+            document.getElementById('success-healthcare').innerHTML = `<strong>Access to Healthcare:</strong> ${data.policy.healthcare}`;
+            document.getElementById('success-empowerment').innerHTML = `<strong>Women's Empowerment:</strong> ${data.policy.empowerment}`;
+
+            // Update Population Class Table
+            const popClassTableBody = document.getElementById('population-class-table').getElementsByTagName('tbody')[0];
+            popClassTableBody.innerHTML = '';
+            data.populationClass.forEach(item => {
+                let row = popClassTableBody.insertRow();
+                row.insertCell().textContent = item.class; row.insertCell().textContent = item.definition;
+                row.insertCell().textContent = formatNumber(item.percentage, 1) + '%';
+                let pollutionCell = row.insertCell(); pollutionCell.textContent = formatNumber(item.pollutionImpact,0); pollutionCell.className = getPollutionColor(item.pollutionImpact) + ' text-center font-medium';
+            });
+
+            // Update Pollution Heatmap Table
+            const heatmapTableBody = document.getElementById('pollution-heatmap-table').getElementsByTagName('tbody')[0];
+            heatmapTableBody.innerHTML = '';
+            data.pollutionHeatmap.forEach(item => {
+                let row = heatmapTableBody.insertRow();
+                row.insertCell().textContent = item.group;
+                let cellAir = row.insertCell(); cellAir.textContent = item.air; cellAir.className = getPollutionColor(item.air) + ' text-center font-medium';
+                let cellWater = row.insertCell(); cellWater.textContent = item.water; cellWater.className = getPollutionColor(item.water) + ' text-center font-medium';
+                let cellWaste = row.insertCell(); cellWaste.textContent = item.waste; cellWaste.className = getPollutionColor(item.waste) + ' text-center font-medium';
+            });
+
+            // --- NEW SECTIONS UPDATE ---
+            // Update Global Comparison Table
+            const globalTableBody = document.getElementById('global-comparison-table-body');
+            globalTableBody.innerHTML = '';
+            if (data.globalComparison) {
+                data.globalComparison.forEach(country => {
+                    let row = globalTableBody.insertRow();
+                    row.insertCell().textContent = country.name;
+                    row.insertCell().textContent = formatNumber(country.population,1);
+                    row.insertCell().textContent = formatNumber(country.tfr,1);
+                    row.insertCell().textContent = formatNumber(country.density,0);
+                    let pollutionCell = row.insertCell(); pollutionCell.textContent = country.pollutionIdx; pollutionCell.className = getPollutionColor(country.pollutionIdx).split(' ')[0].replace('bg-','text-') + ' font-medium';
+                    row.insertCell().textContent = country.controlNote;
+                });
+            }
+
+            // Update Population Scenarios
+            const positiveScenariosList = document.getElementById('positive-scenarios-list');
+            positiveScenariosList.innerHTML = '';
+            if(data.populationScenarios && data.populationScenarios.positive) {
+                data.populationScenarios.positive.forEach(scenario => {
+                    let li = document.createElement('li'); li.textContent = scenario; positiveScenariosList.appendChild(li);
+                });
+            }
+            const negativeScenariosList = document.getElementById('negative-scenarios-list');
+            negativeScenariosList.innerHTML = '';
+            if(data.populationScenarios && data.populationScenarios.negative) {
+                data.populationScenarios.negative.forEach(scenario => {
+                    let li = document.createElement('li'); li.textContent = scenario; negativeScenariosList.appendChild(li);
+                });
+            }
+            const stateScenariosContent = document.getElementById('state-scenarios-content');
+            stateScenariosContent.innerHTML = '';
+            if(data.populationScenarios && data.populationScenarios.stateImpacts) {
+                data.populationScenarios.stateImpacts.forEach(impact => {
+                    const div = document.createElement('div');
+                    div.className = 'scenario-card'; // Re-use for styling
+                    div.innerHTML = `
+                        <h5>${impact.type}</h5>
+                        <p class="text-sm"><strong>Advantage:</strong> ${impact.advantage}</p>
+                        <p class="text-sm"><strong>Disadvantage:</strong> ${impact.disadvantage}</p>
+                        <p class="text-sm mt-1"><strong>Jobs/Market:</strong> ${impact.jobsMarket}</p>
+                        <p class="text-sm"><strong>Key Factors:</strong> ${impact.keyFactors}</p>
+                    `;
+                    stateScenariosContent.appendChild(div);
+                });
+            }
+
+
+            // Update active button style for year selector
+            document.querySelectorAll('.year-selector button').forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.year === year) { button.classList.add('active'); }
+            });
+        }
+
+        // --- STATE SPOTLIGHT FUNCTION ---
+        function updateStateSpotlight(stateName, year) {
+            const yearData = appData[year];
+            if (!yearData || !yearData.stateData) return;
+            const stateInfo = yearData.stateData.find(s => s.name === stateName);
+            if (!stateInfo) { clearStateSpotlight(); return; }
+
+            const spotlightCard = document.getElementById('stateSpotlightCard');
+            const spotlightContent = document.getElementById('spotlight-content');
+            document.getElementById('spotlight-state-name').textContent = stateInfo.name;
+            document.getElementById('spotlight-year').textContent = year;
+
+            spotlightContent.innerHTML = `
+                <div><p><strong>TFR:</strong> ${formatNumber(stateInfo.tfr, 2)}</p></div>
+                <div><p><strong>Pop. Growth:</strong> ${formatNumber(stateInfo.growth, 2)}%</p></div>
+                <div><p><strong>Edu. Rate:</strong> ${formatNumber(stateInfo.eduRate, 0)}%</p></div>
+                <div><p><strong>Poverty Index:</strong> ${formatNumber(stateInfo.povertyIdx, 2)}</p></div>
+                <div><p><strong>Pollution Index:</strong> <span class="${getPollutionColor(stateInfo.pollutionIdx).split(' ')[0].replace('bg-','text-')} font-semibold">${formatNumber(stateInfo.pollutionIdx, 0)}</span></p></div>
+                ${stateInfo.notes ? `<div><p class="mt-2"><strong>Notes for ${year}:</strong> ${stateInfo.notes}</p></div>` : ''}
+            `;
+            spotlightCard.classList.remove('hidden');
+            spotlightCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function clearStateSpotlight() {
+            const spotlightCard = document.getElementById('stateSpotlightCard');
+            const spotlightContent = document.getElementById('spotlight-content');
+            document.getElementById('spotlight-state-name').textContent = '--';
+            spotlightContent.innerHTML = '<p>Select a state from the table above to see its details here.</p>';
+        }
+
+        // --- CHART INITIALIZATION ---
+        function initCharts() {
+            const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: 'rgba(0,0,0,0.8)', titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10, cornerRadius: 4, displayColors: false, } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { grid: { color: '#e5e7eb' }, ticks: { font: { size: 10 } } } } };
+            const povPopCtx = document.getElementById('povertyPopulationChart').getContext('2d');
+            povertyPopulationChartInstance = new Chart(povPopCtx, { type: 'bubble', data: { datasets: [{ label: 'Poverty vs Population Density', data: [], backgroundColor: 'rgba(239, 68, 68, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderWidth: 1 }] }, options: { ...commonOptions, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Population Density (per sq km)', font: {size: 12}}, grid: { display: false } }, y: { title: { display: true, text: 'Poverty Rate (%)', font: {size: 12}}, grid: { color: '#e5e7eb' } } }, plugins: { ...commonOptions.plugins, tooltip: { callbacks: { label: function(context) { return `Density: ${context.raw.x}, Poverty: ${context.raw.y}%`; } } } } } });
+            const popGrowthCtx = document.getElementById('populationGrowthChart').getContext('2d');
+            populationGrowthChartInstance = new Chart(popGrowthCtx, { type: 'line', data: { labels: appData.populationTrend.labels, datasets: [{ label: 'Total Population (Millions)', data: appData.populationTrend.data, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.1, pointRadius: 3, pointBackgroundColor: '#3b82f6' }] }, options: { ...commonOptions, plugins: { legend: { display: true, position: 'top', labels: { font: {size: 12}}}, title: { display: false }, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { title: function(tooltipItems) { return `Year: ${tooltipItems[0].label}`; }, label: function(context) { return `Population: ${context.parsed.y} Million`; } } } }, scales: { x: {title: {display: true, text: 'Year', font: {size: 12}}, grid: { display: false }, ticks: { font: { size: 10 } } }, y: {title: {display: true, text: 'Population (Millions)', font: {size: 12}}, grid: { color: '#e5e7eb' }, ticks: { font: { size: 10 } } } } } });
+            const eduFertilityCtx = document.getElementById('educationFertilityChart').getContext('2d');
+            educationFertilityChartInstance = new Chart(eduFertilityCtx, { type: 'bar', data: { labels: [], datasets: [{ label: 'TFR', data: [], backgroundColor: ['#fbbf24', '#f59e0b', '#d97706', '#b45309'], borderRadius: 4, }] }, options: { ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Education Impact on TFR', font: {size: 14, weight: '600'}}, tooltip: { callbacks: { label: function(context) { return `TFR: ${context.parsed.y}`; } } } }, scales: { x: { title: {display: true, text: 'Education Level', font: {size: 12}}, grid: { display: false } }, y: { title: {display: true, text: 'Total Fertility Rate (TFR)', font: {size: 12}}, beginAtZero: true, grid: { color: '#e5e7eb' } } } } });
+            const initiativeCtx = document.getElementById('initiativeEffectivenessChart').getContext('2d');
+            initiativeEffectivenessChartInstance = new Chart(initiativeCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Effectiveness Score', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#10b981' }] }, options: { ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Initiative Effectiveness vs Budget', font: {size: 14, weight: '600'}}, tooltip: { callbacks: { label: function(context) { return `Effectiveness: ${context.parsed.y}`; } } } }, scales: { x: { title: {display: true, text: 'Budget Allocation (Illustrative)', font: {size: 12}}, grid: { display: false } }, y: { title: {display: true, text: 'Effectiveness Score (0-100)', font: {size: 12}}, beginAtZero: true, max:100, grid: { color: '#e5e7eb' } } } } });
+        }
+
+        // --- INITIAL LOAD ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateDashboardData(currentSelectedYear); 
+        });
+    </script>
+</body>
+</html>
