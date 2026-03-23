@@ -2,7 +2,7 @@
 
 An interactive data-driven dashboard visualizing the complex interplay between **population, poverty, and pollution** in India — past, present, and future (1960–2025–2050). This dashboard is designed to aid **market analysts**, **economists**, **urban planners**, **policy-makers**, and **business leaders** in understanding macroeconomic development scenarios, socio-demographic patterns, and long-term sustainability challenges.
 
-> ✨ Built by [Anusthan Singh](https://www.linkedin.com/in/anusthan12/) — with AI-assisted development, data-backed insights, and policy-driven design.
+> ✨ Built by [Anusthan Singh](https://www.linkedin.com/in/anusthan12/) —  data-backed insights, and policy-driven design.
 
 ---
 
